@@ -2,13 +2,14 @@ import React, { Fragment } from 'react'
 
 const App = () => (
   <Fragment>
-    <header className='pv5 bg-gold black-80'>
-      <h1 className='mt0 mb1 tc'>Create New App</h1>
-      <div className='tc ttc'>by the Qodesmith</div>
+    <header className='pv5 bg-green black-80'>
+      <h1 className='mt0 mb1 tc'>Is Andrew at the Bowlo?</h1>
+      
     </header>
-    <div className='pt4 pb1 tc'>Go save the world with JavaScript</div>
-    <div className='tc'>and edit <code>src/components/<span className='b'>App.jsx</span></code>!</div>
+    <h2 id='isHeThere' className='pt4 f-10rem pb1 tc ttu lawngreen'>I don't actually know</h2>
+    <div id="sinceWhen" className='tc ttc'>but since when?</div>
   </Fragment>
 )
+
 
 export default App

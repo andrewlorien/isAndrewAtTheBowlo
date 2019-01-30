@@ -37,7 +37,7 @@ module.exports = (env, argv) => ({
     The point(s) to enter the application.
   */
   entry: [
-    path.resolve(__dirname, 'src/entry.js')
+    'whatwg-fetch',path.resolve(__dirname, 'src/entry.js')
   ],
 
   /*
@@ -78,6 +78,8 @@ module.exports = (env, argv) => ({
     https://goo.gl/AENyuH
     These options determine how the different types of modules within a project will be treated.
   */
+
+
   module: {
 
     /*
@@ -252,6 +254,7 @@ module.exports = (env, argv) => ({
         ]
       },
 
+
       /*
         IMAGES
         ------
@@ -357,6 +360,8 @@ module.exports = (env, argv) => ({
       https://goo.gl/pwnnmX, https://goo.gl/og4sNK
       Generates the `index.html` file.
     */
+    
+	//    new AssetsPlugin(), // nah that doesn't work
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.ejs'),
       title: 'JavaScript === Awesomeness',
@@ -380,6 +385,11 @@ module.exports = (env, argv) => ({
         console.log(`💻  => Application running in browser at http://localhost:${DEV_SERVER_PORT}\n\n`)
       }
     })
+    ,
+    new CopyWebpackPlugin([
+          { from: 'static' }
+    ])
+
   ].filter(Boolean),
 
   // https://goo.gl/HBnQlq
