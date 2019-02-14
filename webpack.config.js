@@ -385,10 +385,6 @@ module.exports = (env, argv) => ({
         console.log(`💻  => Application running in browser at http://localhost:${DEV_SERVER_PORT}\n\n`)
       }
     })
-    ,
-    new CopyWebpackPlugin([
-          { from: 'static' }
-    ])
 
   ].filter(Boolean),
 

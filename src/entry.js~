@@ -16,11 +16,14 @@ import App from 'components/App'
 // fetch does what ajax used to do
 import 'whatwg-fetch'
 
-// Create a single element for our app to live in.
+// json file the lambda function writes to
+//   THIS KIND OF ACTUALLY WORKS!!
+//var isJson = require('./ishe.json')
+
+// Create a single element for our app to live.
 document.body.innerHTML = '<div id="app"></div>'
 document.body.className = 'bg-black-80 fw4 white-80'
 
-// change this to https when we change the Route53 entry to point to cloudfront instead of S3
 var fileToFetch = 'http://isandrewatthebowlo.com/ishe.json';
 
 // Mount our app.
@@ -41,31 +44,29 @@ function tellTheWorld() {
 
 function readTheFile() {
     return fetch(fileToFetch)
-
+        
     .then(function(response) {
         return response.json()
+    })
     .then(function(json) {
-        console.log('parsed json=', json);
-        isHeThere(json) ;
-
+        console.log('parsed json', json);
+        
+        return json ;
+        
+        
         }).catch(function(ex) {
             console.log('parsing failed', ex)
         })
-    })
-}
+}    
 
-function isHeThere(yesorno) {
-    console.log("json=",yesorno);
-    if (yesorno.ishe = "yes") {
-        console.log("ishe yes?=",yesorno.ishe);
+function isHeThere(json) {
+    if (json.ishe = "yes") {
         // check time for "he just arrived" or "he's been there a while"
         return "yes"
-    } else if (yesorno.ishe = "no") {
-        console.log("ishe no?=",yesorno.ishe);
+    } else if (json.ishe = "no") {
         // if it was recently yes, then return "he just left"
         return "no"
-    } else if (yesorno.ishe = "nearly") {
-        console.log("ishe nearly?=",yesorno.ishe);
+    } else if (json.ishe = "nearly") {
         return "nearly"
     }
 }
@@ -91,13 +92,12 @@ class Timer extends React.Component {
     }
 
     render() {
-//        console.log("read the file", readTheFile())
-console.log {readTheFile()}
-        // readTheFile passes the result to isHeThere.  that's back to front, but i don't understand promises
+        console.log("read the file", readTheFile())
+//        {readTheFile()}
         return (
         <div>
-        {readTheFile()}	
-	<br/>
+        {isHeThere(readTheFile())}
+
         Seconds: {this.state.seconds}
         </div>
     );
