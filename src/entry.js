@@ -32,13 +32,6 @@ ReactDOM.render(
 
 
 
-function tellTheWorld() {
-    ReactDOM.render(
-        isHeThere(readTheFile()),
-        document.querySelector('#isHeThere')
-    )
-}
-
 function readTheFile() {
     return fetch(fileToFetch)
 
@@ -46,6 +39,11 @@ function readTheFile() {
         return response.json()
     .then(function(json) {
         console.log('parsed json=', json);
+	// temporarily try writing to the main object
+        ReactDOM.render(json.ishe,
+        document.querySelector('#isHeThere')
+	);
+
         isHeThere(json) ;
 
         }).catch(function(ex) {
@@ -91,19 +89,22 @@ class Timer extends React.Component {
     }
 
     render() {
-//        console.log("read the file", readTheFile())
-console.log {readTheFile()}
+      readTheFile().then(function(result) {
+//        console.log("read the file", readTheFile()); // readTheFile returns a promise
         // readTheFile passes the result to isHeThere.  that's back to front, but i don't understand promises
         return (
         <div>
-        {readTheFile()}	
+        {result}
 	<br/>
         Seconds: {this.state.seconds}
         </div>
-    );
+        );
+      }, function(err) {
+        console.log(err);
+      })
     }
 
 }
 
 ReactDOM.render(<Timer />, sinceWhen);
-tellTheWorld();
+// ReactDOM.render(yesorno, isHeThere);
