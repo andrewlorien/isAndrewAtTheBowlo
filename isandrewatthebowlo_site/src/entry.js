@@ -41,10 +41,10 @@ function readTheFile() {
         console.log('parsed json=', json);
 	// temporarily try writing to the main object
         ReactDOM.render(json.ishe,
-        document.querySelector('#isHeThere')
-	);
+            document.querySelector('#isHeThere')
+        );
 
-        return isHeThere(json) ;
+        isHeThere(json) ;
 
         }).catch(function(ex) {
             console.log('parsing failed', ex)
@@ -52,40 +52,47 @@ function readTheFile() {
     })
 }
 
-function isHeThere(yesorno) {
-    console.log("json=",yesorno);
-    if (yesorno.ishe == "yes") {
-        console.log("ishe yes?=",yesorno.ishe);
+function isHeThere(yesornoJson) {
+    var yesorno = "I don't actually know"
+    console.log("json=",yesornoJson);
+        console.log("ishe ?=",yesornoJson.ishe);
+    if (yesornoJson.ishe == "yes") {
+        console.log("ishe yes?=",yesornoJson.ishe);
         // check time for "he just arrived" or "he's been there a while"
-        return "yes"
-    } else if (yesorno.ishe == "no") {
-        console.log("ishe no?=",yesorno.ishe);
+        yesorno = "yes"
+    } else if (yesornoJson.ishe == "no") {
+        console.log("ishe no?=",yesornoJson.ishe);
         // if it was recently yes, then return "he just left"
-        return "no"
-    } else if (yesorno.ishe == "nearly") {
-        console.log("ishe nearly?=",yesorno.ishe);
-        return "nearly"
+        yesorno = "no"
+    } else  {
+        console.log("ishe nearly?=",yesornoJson.ishe);
+        yesorno = yesornoJson.ishe 
     }
+//    ReactDOM.render(<Timer />, yesorno);  // "Target container is not a DOM element."
+    ReactDOM.render(yesorno,document.querySelector('#AndrewsMessage'));
 }
-
+ 
 class Timer extends React.Component {
     constructor(props) {
     super(props);
     this.state = { seconds: 0 };    
     	// check the json file... but how do we do something with it?
+    /*
         this.yesorno = readTheFile();
-        console.log(this.yesorno); // this is still a promise
-	this.yesornoresolve=readTheFile().then(function(result) {
-        	console.log("resolved result:",result);
-        	}, function(err) {
-                   console.log(err);
+        console.log("Timer:",this.yesorno); // this is still a promise
+        this.yesornoresolve=readTheFile().then(function(result) {
+        	console.log("resolved result:",result);  // this is undefined
+        }, function(err) {
+                console.log("Andrew's Error: ",err);
         })
+        */
     }
 
     tick() {
     this.setState(prevState => ({
         seconds: prevState.seconds + 1
     }));
+    readTheFile();
     }
 
     componentDidMount() {
@@ -100,15 +107,15 @@ class Timer extends React.Component {
 //        console.log("read the file", readTheFile()); // readTheFile returns a promise
         // readTheFile passes the result to isHeThere.  that's back to front, but i don't understand promises
         return (
-        <div>
-        {this.yesorno} message goes here
-	<br/>
+        <div >
         Seconds: {this.state.seconds}
         </div>
         );
     }
 
 }
+
+readTheFile();
 
 ReactDOM.render(<Timer />, sinceWhen);
 // ReactDOM.render(yesorno, isHeThere);

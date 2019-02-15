@@ -364,7 +364,7 @@ module.exports = (env, argv) => ({
 	//    new AssetsPlugin(), // nah that doesn't work
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.ejs'),
-      title: 'JavaScript === Awesomeness',
+      title: 'Is Andrew at the bowlo?  Check here to find out.',
       mobileThemeColor: '#000000',
       description: 'Awesome JavaScript project created with Create New App!',
       polyfill: !!env.prod,
@@ -390,6 +390,10 @@ module.exports = (env, argv) => ({
 
   // https://goo.gl/HBnQlq
   devServer: {
+      /* andrew wants to make a request to S3 from his local https://github.com/webpack/webpack-dev-server/issues/533 */
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
     /*
       https://goo.gl/eFdUfe
       Tell the dev server where to serve content from.
@@ -417,7 +421,8 @@ module.exports = (env, argv) => ({
     open: true,
 
     // https://goo.gl/EVMMyC
-    port: DEV_SERVER_PORT,
+    port: DEV_SERVER_PORT, // this is undefined on my CompliSpace mac
+//    port: 8765,
 
     /*
       https://goo.gl/mrysGp, https://goo.gl/srfqLB
