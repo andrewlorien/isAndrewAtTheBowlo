@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Is Andrew At The Bowlo 2</string>
+    <string name="action_settings">Settings</string>
+    <string name="YesActually">Yes</string>
+    <string name="NoActually">No</string>
+    <string name="SoonActually">Soon</string>
+    <string name="title_activity_location_request">LocationRequest</string>
+    <string name="title_activity_map_demo">MapDemoActivity</string>
+</resources>

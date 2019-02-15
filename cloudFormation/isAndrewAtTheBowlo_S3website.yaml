@@ -1,0 +1,107 @@
+Parameters:
+  DomainName:
+    Description: DNS name for this S3 website
+    Default: isandrewatthebowlo.com
+    Type: String
+  SSLarn:
+    Description: SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in us-east-1)
+    Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
+    Type: String
+Resources:
+  BucketName:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref DomainName
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+  isandrewatthebowloBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref BucketName
+      PolicyDocument:
+        Id: isandrewatthebowloPolicy
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AddPerm
+          Effect: Allow
+          Principal: '*'
+          Action:
+          - 's3:GetObject'
+          Resource: 
+            Fn::Join: 
+              - ""
+              - 
+                - "arn:aws:s3:::"
+                - Ref: "BucketName"
+                - "/*"
+### This doesn't work.  not from cloudformation at least.
+#  isandrewatthebowloDNSName:
+#    Type: AWS::Route53::RecordSet
+#    Properties:
+#      Name: !Ref DomainName
+#      Comment: Is Andrew at the Bowlo?  The world wants to know...
+#      HostedZoneName: !Join ['', [!Ref 'DomainName', .]]
+#      Type: A
+#      AliasTarget:
+#        # Cloudfront has a single hardcoded HostedZoneId Z2FDTNDATAQYW2 (but s3-website has one per region, sydney is Z1WCIGYICN2BYD ??)
+#        HostedZoneId:  Z2FDTNDATAQYW2
+#        DNSName: s3-website-ap-southeast-2.amazonaws.com
+
+#  isandrewatthebowloAPIDNSName:
+#    Type: AWS::Route53::RecordSet
+#    Properties:
+#      Name: 
+#        Fn::Join: 
+#          - ""
+#          - 
+#            - "api."
+#            - Ref: DomainName
+#      Comment: Is Andrew at the Bowlo?  The world wants to know...
+#      HostedZoneName: !Join ['', [!Ref 'DomainName', .]]
+#      Type: A
+#      AliasTarget:
+#        # Lambda function endpoint thingo
+
+
+  isandrewatthebowloSSL:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+        
+  isandrewatthebowloCloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt 
+              - BucketName
+              - DomainName          
+            Id: !Ref BucketName
+            CustomOriginConfig:
+              HTTPPort: '80'
+              HTTPSPort: '443'
+              OriginProtocolPolicy: http-only
+        Enabled: 'true'
+        Comment: CloudFront is required for SSL termination
+        DefaultRootObject: index.html
+        Aliases:
+        - !Ref DomainName
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET        
+          - HEAD
+          TargetOriginId: !Ref BucketName          
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none        
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLarn
+          SslSupportMethod: sni-only
+          
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt BucketName.WebsiteURL
+    Description: Is Andrew at the Bowlo?  The world wants to know...

@@ -1,0 +1,8 @@
+  isandrewatthebowloSSL:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      DomainValidationOptions:
+      - DomainName: !Ref DomainName
+        ValidationDomain: !Ref DomainName
+      ValidationMethod: DNS

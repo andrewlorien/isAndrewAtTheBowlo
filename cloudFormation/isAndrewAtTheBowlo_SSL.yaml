@@ -1,0 +1,14 @@
+Parameters:
+  DomainName:
+    Description: DNS name for this S3 website  eg aws cloudformation create-stack --stack-name isAndrewAtTheBowlo-SSL --template-body file://isAndrewAtTheBowlo_SSL.yaml  --capabilities CAPABILITY_IAM --parameters='[{"ParameterKey":"DomainName","ParameterValue":"api.isandrewatthebowlo.com"}]'
+    Default: isandrewatthebowlo.com
+    Type: String
+Resources:
+  isandrewatthebowloSSL:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      DomainValidationOptions:
+      - DomainName: !Ref DomainName
+        ValidationDomain: !Ref DomainName
+      ValidationMethod: DNS
