@@ -44,7 +44,7 @@ function readTheFile() {
         document.querySelector('#isHeThere')
 	);
 
-        isHeThere(json) ;
+        return isHeThere(json) ;
 
         }).catch(function(ex) {
             console.log('parsing failed', ex)
@@ -54,15 +54,15 @@ function readTheFile() {
 
 function isHeThere(yesorno) {
     console.log("json=",yesorno);
-    if (yesorno.ishe = "yes") {
+    if (yesorno.ishe == "yes") {
         console.log("ishe yes?=",yesorno.ishe);
         // check time for "he just arrived" or "he's been there a while"
         return "yes"
-    } else if (yesorno.ishe = "no") {
+    } else if (yesorno.ishe == "no") {
         console.log("ishe no?=",yesorno.ishe);
         // if it was recently yes, then return "he just left"
         return "no"
-    } else if (yesorno.ishe = "nearly") {
+    } else if (yesorno.ishe == "nearly") {
         console.log("ishe nearly?=",yesorno.ishe);
         return "nearly"
     }
@@ -71,7 +71,15 @@ function isHeThere(yesorno) {
 class Timer extends React.Component {
     constructor(props) {
     super(props);
-    this.state = { seconds: 0 };
+    this.state = { seconds: 0 };    
+    	// check the json file... but how do we do something with it?
+        this.yesorno = readTheFile();
+        console.log(this.yesorno); // this is still a promise
+	this.yesornoresolve=readTheFile().then(function(result) {
+        	console.log("resolved result:",result);
+        	}, function(err) {
+                   console.log(err);
+        })
     }
 
     tick() {
@@ -89,19 +97,15 @@ class Timer extends React.Component {
     }
 
     render() {
-      readTheFile().then(function(result) {
 //        console.log("read the file", readTheFile()); // readTheFile returns a promise
         // readTheFile passes the result to isHeThere.  that's back to front, but i don't understand promises
         return (
         <div>
-        {result}
+        {this.yesorno} message goes here
 	<br/>
         Seconds: {this.state.seconds}
         </div>
         );
-      }, function(err) {
-        console.log(err);
-      })
     }
 
 }

@@ -396,7 +396,7 @@ module.exports = (env, argv) => ({
       This is only necessary if you want to serve static files.
       Content not served from Webpack's devServer is served from here.
     */
-    contentBase: path.resolve(__dirname, 'dist'),
+//    contentBase: path.resolve(__dirname, 'dist'),
 
     /*
       https://goo.gl/mgQHiQ
