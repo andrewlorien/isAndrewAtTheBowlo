@@ -149,34 +149,34 @@ Resources:
         Version: '2012-10-17'
         Statement:
         - Sid: AddLambdaPerm
-            Effect: Allow
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-            Action:
-            - 's3:GetObject'
-            - 's3:PutObject'
-            - 's3:DeleteObject'
-            Resource: 
-            Fn::Join: 
-                - ""
-                - 
-                - "arn:aws:s3:::"
-                - Ref: "DomainName"
-                - "/*"          
+          Effect: Allow
+          Principal:
+            Service:
+              - "lambda.amazonaws.com"
+          Action:
+          - 's3:GetObject'
+          - 's3:PutObject'
+          - 's3:DeleteObject'
+          Resource: 
+          Fn::Join: 
+            - ""
+            - 
+            - "arn:aws:s3:::"
+            - Ref: "DomainName"
+            - "/*"          
         - Sid: AddLambdaPerm
-            Effect: Allow
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-            Action:
-            - 's3:ListBucket'
-            Resource: 
-            Fn::Join: 
-                - ""
-                - 
-                - "arn:aws:s3:::"
-                - Ref: "DomainName"
+          Effect: Allow
+          Principal:
+            Service:
+              - "lambda.amazonaws.com"
+          Action:
+          - 's3:ListBucket'
+          Resource: 
+          Fn::Join: 
+            - ""
+            - 
+            - "arn:aws:s3:::"
+            - Ref: "DomainName"
           
   lambdaLogGroup:
     Type: "AWS::Logs::LogGroup"
