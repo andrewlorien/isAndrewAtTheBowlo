@@ -20,7 +20,7 @@ Parameters:
     Description: SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in us-east-1)
     Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
     Type: String
-    
+
 # TODO : add Domain Name ( console: API gateway | Custom Domain Names ) 
 # and do you need the path mappings??
 Resources:
@@ -30,13 +30,12 @@ Resources:
       Name: "isandrewatthebowlo-api"
       Description: "Andrew's phone can tell me whether he's at the bowlo (or not)"
 
-# i did this by hand so i can't do it in CF
+# i did this by hand so i can't do it in CF      
 #  domainName:
 #    Type: 'AWS::ApiGateway::DomainName'
 #    Properties:
 #      DomainName: 
 #        Fn::Join: 
-#          - ""
 #          - 
 #            - "api."
 #            - Ref: DomainName
@@ -139,39 +138,14 @@ Resources:
                   - ""
                   - - "arn:aws:s3:::"
                     - !Ref DomainName
+                  Fn::Join:
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - !Ref DomainName
+                    - "ishe.json"
           PolicyName: "S3"
 
-  isandrewatthebowloBucketLambdaPolicy:
-    Type: 'AWS::S3::BucketPolicy'
-    Properties:
-      Bucket: !Ref DomainName
-      PolicyDocument:
-        Id: isandrewatthebowloLambdaPolicy
-        Version: '2012-10-17'
-        Statement:
-        - Sid: AddLambdaPerm
-          Effect: Allow
-          Principal: !GetAtt "lambdaIAMRole.Arn"
-          Action:
-          - 's3:GetObject'
-          - 's3:PutObject'
-          - 's3:DeleteObject'
-          Resource:
-            Fn::Join:
-            - ""
-            - - "arn:aws:s3:::"
-              - !Ref DomainName
-              - "/*"   
-        - Sid: AddLambdaPerm
-          Effect: Allow
-          Principal: !GetAtt "lambdaIAMRole.Arn"
-          Action:
-          - 's3:ListBucket'
-          Resource:
-            Fn::Join:
-            - ""
-            - - "arn:aws:s3:::"
-              - !Ref DomainName
+          
           
   lambdaLogGroup:
     Type: "AWS::Logs::LogGroup"
