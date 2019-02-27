@@ -21,12 +21,14 @@ Parameters:
     Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
     Type: String
     
+# TODO : add Domain Name ( console: API gateway | Custom Domain Names ) 
+# and do you need the path mappings??
 Resources:
   apiGateway:
     Type: "AWS::ApiGateway::RestApi"
     Properties:
       Name: "isandrewatthebowlo-api"
-      Description: "Andrew's phone can tell my whether he's at the bowlo (or not)"
+      Description: "Andrew's phone can tell me whether he's at the bowlo (or not)"
 
   domainName:
     Type: 'AWS::ApiGateway::DomainName'
@@ -129,6 +131,7 @@ Resources:
               - Action:
                   - "s3:PutObject"
                   - "s3:GetObject"
+                  - "s3:DeleteObject"
                 Effect: "Allow"
                 Resource:
                   Fn::Join:
