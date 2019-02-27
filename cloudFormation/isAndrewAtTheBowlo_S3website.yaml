@@ -7,6 +7,7 @@ Parameters:
     Description: SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in us-east-1)
     Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
     Type: String
+# TODO : add cache-control to index.html and ishe.json    
 Resources:
   BucketName:
     Type: AWS::S3::Bucket
