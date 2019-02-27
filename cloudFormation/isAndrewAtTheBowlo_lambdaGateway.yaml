@@ -158,12 +158,12 @@ Resources:
           - 's3:PutObject'
           - 's3:DeleteObject'
           Resource: 
-          Fn::Join: 
-            - ""
-            - 
-            - "arn:aws:s3:::"
-            - Ref: "DomainName"
-            - "/*"          
+            Fn::Join: 
+              - ""
+              - 
+              - "arn:aws:s3:::"
+              - Ref: "DomainName"
+              - "/*"          
         - Sid: AddLambdaPerm
           Effect: Allow
           Principal:
@@ -172,11 +172,11 @@ Resources:
           Action:
           - 's3:ListBucket'
           Resource: 
-          Fn::Join: 
-            - ""
-            - 
-            - "arn:aws:s3:::"
-            - Ref: "DomainName"
+            Fn::Join: 
+              - ""
+              - 
+              - "arn:aws:s3:::"
+              - Ref: "DomainName"
           
   lambdaLogGroup:
     Type: "AWS::Logs::LogGroup"
