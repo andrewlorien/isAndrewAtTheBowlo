@@ -145,6 +145,39 @@ Resources:
                     - "ishe.json"
           PolicyName: "S3"
 
+
+  isandrewatthebowloBucketLambdaPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref DomainName
+      PolicyDocument:
+        Id: isandrewatthebowloLambdaPolicy
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AddLambdaPerm
+          Effect: Allow
+          Principal: !GetAtt "lambdaIAMRole.Arn"
+          Action:
+          - 's3:GetObject'
+          - 's3:PutObject'
+          - 's3:DeleteObject'
+          Resource:
+            Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - !Ref DomainName
+              - "/*"   
+        - Sid: AddLambdaPerm
+          Effect: Allow
+          Principal: !GetAtt "lambdaIAMRole.Arn"
+          Action:
+          - 's3:ListBucket'
+          Resource:
+            Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - !Ref DomainName
+
           
           
   lambdaLogGroup:
