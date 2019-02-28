@@ -143,7 +143,7 @@ Resources:
                   - - "arn:aws:s3:::"
                     - !Ref DomainName
                     - "ishe.json"
-          PolicyName: "S3"
+          PolicyName: "lambdaS3"
 
 
   isandrewatthebowloBucketLambdaPolicy:
@@ -156,7 +156,9 @@ Resources:
         Statement:
         - Sid: AddLambdaPerm
           Effect: Allow
-          Principal: !GetAtt "lambdaIAMRole.Arn"
+          Principal: 
+            AWS:
+              - !GetAtt "lambdaIAMRole.Arn"
           Action:
           - 's3:GetObject'
           - 's3:PutObject'
