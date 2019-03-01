@@ -1,181 +1,335 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "An API so Andrew can tell the world if he's at the bowlo (or not)"
-
+AWSTemplateFormatVersion: 2010-09-09
+Description: An API so Andrew can tell the world if he's at the bowlo (or not)
 Parameters:
   apiGatewayStageName:
-    Type: "String"
-    AllowedPattern: "^[a-z0-9]+$"
-    Default: "sayifandrewisatthebowlo"
-
+    Type: String
+    AllowedPattern: '^[a-z0-9]+$'
+    Default: sayifandrewisatthebowlo
   lambdaFunctionName:
-    Type: "String"
-    AllowedPattern: "^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$"
-    Default: "telltheworld"
+    Type: String
+    AllowedPattern: '^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$'
+    Default: telltheworld
   DomainName:
     Description: DNS name and S3 website bucket name
     Default: isandrewatthebowlo.com
     Type: String
-
   SSLarn:
-    Description: SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in us-east-1)
-    Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
+    Description: >-
+      SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in
+      us-east-1)
+    Default: >-
+      arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
     Type: String
-
-# TODO : add Domain Name ( console: API gateway | Custom Domain Names ) 
-# and do you need the path mappings??
 Resources:
   apiGateway:
-    Type: "AWS::ApiGateway::RestApi"
+    Type: 'AWS::ApiGateway::RestApi'
     Properties:
-      Name: "isandrewatthebowlo-api"
-      Description: "Andrew's phone can tell me whether he's at the bowlo (or not)"
-
-# i did this by hand so i can't do it in CF      
-#  domainName:
-#    Type: 'AWS::ApiGateway::DomainName'
-#    Properties:
-#      DomainName: 
-#        Fn::Join: 
-#          - 
-#            - "api."
-#            - Ref: DomainName
-#      CertificateArn: !Ref SSLarn      
-      
+      Name: isandrewatthebowlo-api
+      Description: Andrew's phone can tell me whether he's at the bowlo (or not)
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
   apiGatewayRootMethod:
-    Type: "AWS::ApiGateway::Method"
+    Type: 'AWS::ApiGateway::Method'
     Properties:
-      AuthorizationType: "NONE"
-      HttpMethod: "POST"
+      AuthorizationType: NONE
+      HttpMethod: POST
       Integration:
-        IntegrationHttpMethod: "POST"
-        Type: "AWS_PROXY"
-        Uri: !Sub
-          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations"
-          - lambdaArn: !GetAtt "lambdaFunction.Arn"
-      ResourceId: !GetAtt "apiGateway.RootResourceId"
-      RestApiId: !Ref "apiGateway"
-
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub 
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !GetAtt lambdaFunction.Arn
+      ResourceId: !GetAtt apiGateway.RootResourceId
+      RestApiId: !Ref apiGateway
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9b22afb2-0c43-48ad-abfc-568b86875fa4
   apiGatewayDeployment:
-    Type: "AWS::ApiGateway::Deployment"
+    Type: 'AWS::ApiGateway::Deployment'
     DependsOn:
-      - "apiGatewayRootMethod"
+      - apiGatewayRootMethod
     Properties:
-      RestApiId: !Ref "apiGateway"
-      StageName: !Ref "apiGatewayStageName"
-
+      RestApiId: !Ref apiGateway
+      StageName: !Ref apiGatewayStageName
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: fdf0872e-e117-4588-84ca-cf5ce58cb8e1
   lambdaFunction:
-    Type: "AWS::Lambda::Function"
+    Type: 'AWS::Lambda::Function'
     Properties:
       Code:
         ZipFile: |
-          def handler(event,context):
-            return {
-              'body': 'Hello there {0}'.format(event['requestContext']['identity']['sourceIp']),
-              'headers': {
-                'Content-Type': 'text/plain'
-              },
-              'statusCode': 200
-            }
-      Description: "My function"
-      FunctionName: !Ref "lambdaFunctionName"
-      Handler: "index.telltheworld"
+          import boto3
+          import json
+          import datetime
+
+          def test():
+              when = datetime.datetime.now().isoformat()
+              whatDoesHeSay = "soon"
+              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
+              return jsondata
+
+
+          def telltheworld(event, context):
+              AWS_BUCKET_NAME = 'isandrewatthebowlo.com'
+              s3 = boto3.resource('s3')
+              bucket = s3.Bucket(AWS_BUCKET_NAME)
+              path = 'ishe.json'
+              when = datetime.datetime.now().isoformat()
+              whatDoesHeSay = event['whatDoesHeSay']
+              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
+          #{
+          #"ishe":"no",
+          #"when":"2019-01-08Z23:00:00"
+          #}
+
+              bucket.put_object(
+                  ACL='public-read',
+                  ContentType='application/json',
+                  Key=path,
+                  Body=jsondata,
+              )
+
+              body = {
+                  "uploaded": "true",
+                  "bucket": AWS_BUCKET_NAME,
+                  "path": path,
+              }
+              return {
+                  "statusCode": 200,
+                  "body": json.dumps(body)
+              }
+              print (body) 
+      Description: Recieve an http request through the API gateway; write a file to S3
+      FunctionName: !Ref lambdaFunctionName
+      Handler: !Sub 'index.${lambdaFunctionName}'
       MemorySize: 128
-      Role: !GetAtt "lambdaIAMRole.Arn"
-      Runtime: "python2.7"
+      Role: !GetAtt lambdaIAMRole.Arn
+      Runtime: python2.7
       Timeout: 10
-# i think i should add "concurrency: 1" because i only want to call this thing once at a time      
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: bdf9760f-cecd-47e9-8512-b707ad1072f9
   lambdaApiGatewayInvoke:
-    Type: "AWS::Lambda::Permission"
+    Type: 'AWS::Lambda::Permission'
     Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !GetAtt "lambdaFunction.Arn"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/*/POST/"
-
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt lambdaFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub >-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/*/POST/
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3253b330-a759-4f20-84de-a3e393124a20
   lambdaIAMRole:
-    Type: "AWS::IAM::Role"
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: 2012-10-17
         Statement:
           - Action:
-              - "sts:AssumeRole"
-            Effect: "Allow"
+              - 'sts:AssumeRole'
+            Effect: Allow
             Principal:
               Service:
-                - "lambda.amazonaws.com"
+                - lambda.amazonaws.com
       Policies:
         - PolicyDocument:
-            Version: "2012-10-17"
+            Version: 2012-10-17
             Statement:
               - Action:
-                  - "logs:CreateLogGroup"
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Effect: "Allow"
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Effect: Allow
                 Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaFunctionName}:*"
-          PolicyName: "lambda"
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaFunctionName}:*
+          PolicyName: lambda
         - PolicyDocument:
-            Version: "2012-10-17"
+            Version: 2012-10-17
             Statement:
               - Action:
-                  - "s3:ListBucket"
-                Effect: "Allow"
-                Resource:
-                  Fn::Join:
-                  - ""
-                  - - "arn:aws:s3:::"
-                    - !Ref DomainName
+                  - 's3:HeadBucket'
+                Effect: Allow
+                Resource: "*"
               - Action:
-                  - "s3:PutObject"
-                  - "s3:GetObject"
-                  - "s3:DeleteObject"
-                Effect: "Allow"
+                  - 's3:ListBucket'
+                Effect: Allow
+                Resource: 
+                  'Fn::Join':
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref DomainName
+              - Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:DeleteObject'
+                  - 's3:PutObjectAcl'
+                Effect: Allow
                 Resource:
-                  Fn::Join:
-                  - ""
-                  - - "arn:aws:s3:::"
-                    - !Ref DomainName
-                    - "ishe.json"
-          PolicyName: "lambdaS3"
-
+                  'Fn::Join':
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref DomainName
+                      - '/ishe.json'
+          PolicyName: lambdaS3
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b49b8949-952c-4d28-ae92-26116cd023c2
   isandrewatthebowloBucketLambdaPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
       Bucket: !Ref DomainName
-      PolicyDocument:          
+      PolicyDocument:
         Id: isandrewatthebowloLambdaPolicy
         Version: 2012-10-17
         Statement:
-          - Sid: AddLambdaPerm
+          - Sid: AddLambdaFilePermission
             Action:
               - 's3:DeleteObject'
               - 's3:GetObject'
-              - 's3:HeadBucket'
-              - 's3:ListBucket'
+#              - 's3:HeadBucket'
+#              - 's3:ListBucket'
               - 's3:PutObject'
             Effect: Allow
-            Resource: 'arn:aws:s3:::isandrewatthebowlo.com'
+            Resource: 
+              'Fn::Join':
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref DomainName
+                - '/*'            
+            Principal: "*"
+          - Sid: S3PublicWebsite
+            Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: 
+              'Fn::Join':
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref DomainName
+                - '/*'            
             Principal:
               AWS:
-                - !GetAtt "lambdaIAMRole.Arn"
-
-
-    
-          
+                - !GetAtt lambdaIAMRole.Arn
+#          - Sid: AddLambdaBucketPermission
+#            Action:
+#              - 's3:HeadBucket'
+#              - 's3:ListBucket'
+#            Effect: Allow
+#            Resource: 
+#              'Fn::Join':
+#              - ''
+#              - - 'arn:aws:s3:::'
+#                - !Ref DomainName
+#            Principal:
+#              AWS:
+#                - !GetAtt lambdaIAMRole.Arn
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: ef33ecef-cd26-4377-b7d4-4f68816655b1
   lambdaLogGroup:
-    Type: "AWS::Logs::LogGroup"
+    Type: 'AWS::Logs::LogGroup'
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${lambdaFunctionName}"
+      LogGroupName: !Sub '/aws/lambda/${lambdaFunctionName}'
       RetentionInDays: 90
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b17d8d5a-ba74-4415-9f39-bae5a578043b
 Outputs:
   apiGatewayInvokeURL:
-    Value: !Sub "https://${apiGateway}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStageName}" 
-    # that needed a bit more clicking to get it right.
-    # but i'm sure i could export it out of CF and it'll work
-
+    Value: !Sub >-
+      https://${apiGateway}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStageName}
   lambdaArn:
-    Value: !GetAtt "lambdaFunction.Arn"
+    Value: !GetAtt lambdaFunction.Arn
+Metadata:
+  'AWS::CloudFormation::Designer':
+    b17d8d5a-ba74-4415-9f39-bae5a578043b:
+      size:
+        width: 150
+        height: 150
+      position:
+        x: 60
+        'y': 390
+      z: 1
+      embeds: []
+    b49b8949-952c-4d28-ae92-26116cd023c2:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        'y': 160
+      z: 1
+      embeds: []
+    ef33ecef-cd26-4377-b7d4-4f68816655b1:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 680
+        'y': 160
+      z: 1
+      embeds: []
+    bdf9760f-cecd-47e9-8512-b707ad1072f9:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 430
+        'y': 160
+      z: 1
+      embeds: []
+    3253b330-a759-4f20-84de-a3e393124a20:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 430
+        'y': 280
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - bdf9760f-cecd-47e9-8512-b707ad1072f9
+    4f03333b-36dd-4c55-a5d9-9b4ba9ee9452:
+      size:
+        width: 330
+        height: 240
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds:
+        - 9b22afb2-0c43-48ad-abfc-568b86875fa4
+        - fdf0872e-e117-4588-84ca-cf5ce58cb8e1
+    9b22afb2-0c43-48ad-abfc-568b86875fa4:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 290
+        'y': 160
+      z: 2
+      parent: 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+      embeds: []
+      iscontainedinside:
+        - 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+        - 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+    fdf0872e-e117-4588-84ca-cf5ce58cb8e1:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 140
+        'y': 160
+      z: 2
+      parent: 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+      embeds: []
+      iscontainedinside:
+        - 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+        - 4f03333b-36dd-4c55-a5d9-9b4ba9ee9452
+      dependson:
+        - 9b22afb2-0c43-48ad-abfc-568b86875fa4
