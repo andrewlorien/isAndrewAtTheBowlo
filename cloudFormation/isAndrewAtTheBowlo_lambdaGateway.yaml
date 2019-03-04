@@ -65,26 +65,37 @@ Resources:
           import json
           import datetime
 
+
+          AWS_BUCKET_NAME = 'isandrewatthebowlo.com'
+          s3 = boto3.resource('s3')
+          bucket = s3.Bucket(AWS_BUCKET_NAME)
+          
           def test():
               when = datetime.datetime.now().isoformat()
               whatDoesHeSay = "soon"
               jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
               return jsondata
 
-
+              
+          def debuggit(event, context):
+              path = 'debuggit.json'
+              when = datetime.datetime.now().isoformat()
+              jsondata = str(event)      
+              putitinthebucket(jsondata,path)
+              
+          # call this function with a PUT request containing a json object like {"whatDoesHeSay": "no"}
           def telltheworld(event, context):
-              AWS_BUCKET_NAME = 'isandrewatthebowlo.com'
-              s3 = boto3.resource('s3')
-              bucket = s3.Bucket(AWS_BUCKET_NAME)
               path = 'ishe.json'
               when = datetime.datetime.now().isoformat()
               whatDoesHeSay = event['whatDoesHeSay']
               jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
+              putitinthebucket(jsondata,path)
           #{
           #"ishe":"no",
           #"when":"2019-01-08Z23:00:00"
           #}
 
+          def putitinthebucket(jsondata,path):
               bucket.put_object(
                   ACL='public-read',
                   ContentType='application/json',
@@ -105,7 +116,9 @@ Resources:
       Description: Recieve an http request through the API gateway; write a file to S3
       FunctionName: !Ref lambdaFunctionName
       Handler: !Sub 'index.${lambdaFunctionName}'
+      # min allowed MemorySize is 64MB.  My test run hit 73MB
       MemorySize: 128
+      ReservedConcurrentExecutions : 1
       Role: !GetAtt lambdaIAMRole.Arn
       Runtime: python2.7
       Timeout: 10
@@ -175,6 +188,18 @@ Resources:
                     - - 'arn:aws:s3:::'
                       - !Ref DomainName
                       - '/ishe.json'
+              - Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:DeleteObject'
+                  - 's3:PutObjectAcl'
+                Effect: Allow
+                Resource:
+                  'Fn::Join':
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref DomainName
+                      - '/debuggit.json'
           PolicyName: lambdaS3
     Metadata:
       'AWS::CloudFormation::Designer':
