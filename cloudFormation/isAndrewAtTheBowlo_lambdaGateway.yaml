@@ -73,7 +73,7 @@ Resources:
           def test():
               when = datetime.datetime.now().isoformat()
               whatDoesHeSay = "soon"
-              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
+              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
               return jsondata
 
               
