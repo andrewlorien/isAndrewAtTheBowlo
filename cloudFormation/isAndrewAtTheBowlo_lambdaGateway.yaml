@@ -90,7 +90,15 @@ Resources:
               querystring = event['queryStringParameters']
               whatDoesHeSay = querystring['whatDoesHeSay']
               jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
-              putitinthebucket(jsondata,path)
+              body = putitinthebucket(jsondata,path)
+            
+              print (body) 
+              return {
+                "isBase64Encoded": False,
+                "headers": { "Content-Type": "application/json" },
+                "statusCode": 200,
+                "body": json.dumps(body)
+              }
           #{
           #"ishe":"no",
           #"when":"2019-01-08Z23:00:00Z"
@@ -109,11 +117,7 @@ Resources:
                   "bucket": AWS_BUCKET_NAME,
                   "path": path,
               }
-              return {
-                  "statusCode": 200,
-                  "body": json.dumps(body)
-              }
-              print (body) 
+              return body
       Description: Recieve an http request through the API gateway; write a file to S3
       FunctionName: !Ref lambdaFunctionName
       Handler: !Sub 'index.${lambdaFunctionName}'
