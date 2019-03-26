@@ -7,7 +7,6 @@ Parameters:
     Description: SSL certificate created by isAndrewAtTheBowlo_SSL.yaml (must be in us-east-1)
     Default: arn:aws:acm:us-east-1:166095187240:certificate/28563903-ee35-4da5-ac6f-e7c9c3dc87ca
     Type: String
-# TODO : add cache-control to index.html and ishe.json    
 Resources:
   BucketName:
     Type: AWS::S3::Bucket
@@ -17,6 +16,10 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+      CorsConfiguration:
+        CorsRules:
+        - AllowedMethods: [GET]
+        AllowedOrigins: "*"
   isandrewatthebowloBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -35,7 +38,8 @@ Resources:
               - ""
               - 
                 - "arn:aws:s3:::"
-                - Ref: "BucketName"
+                - 
+                  Ref: "BucketName"
                 - "/*"
 ### This doesn't work.  not from cloudformation at least.
 #  isandrewatthebowloDNSName:
@@ -49,26 +53,6 @@ Resources:
 #        # Cloudfront has a single hardcoded HostedZoneId Z2FDTNDATAQYW2 (but s3-website has one per region, sydney is Z1WCIGYICN2BYD ??)
 #        HostedZoneId:  Z2FDTNDATAQYW2
 #        DNSName: s3-website-ap-southeast-2.amazonaws.com
-
-#  isandrewatthebowloAPIDNSName:
-#    Type: AWS::Route53::RecordSet
-#    Properties:
-#      Name: 
-#        Fn::Join: 
-#          - ""
-#          - 
-#            - "api."
-#            - Ref: DomainName
-#      Comment: Is Andrew at the Bowlo?  The world wants to know...
-#      HostedZoneName: !Join ['', [!Ref 'DomainName', .]]
-#      Type: A
-#      AliasTarget:
-#        # Lambda function endpoint thingo
-
-
-  isandrewatthebowloSSL:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
         
   isandrewatthebowloCloudFront:
     Type: AWS::CloudFront::Distribution
