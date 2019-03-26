@@ -59,7 +59,7 @@
     "deploy": "aws s3 cp --recursive dist s3://isandrewatthebowlo.com --profile radagast"
   },
   "dependencies": {
-    "copy-webpack-plugin": "^4.6.0",
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "^3.0.0",
+    "human-time": "0.0.2"
   }
 }

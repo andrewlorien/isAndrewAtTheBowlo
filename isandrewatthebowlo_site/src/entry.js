@@ -22,6 +22,7 @@ document.body.className = 'bg-black-80 fw4 white-80'
 
 // change this to https when we change the Route53 entry to point to cloudfront instead of S3
 var fileToFetch = 'http://isandrewatthebowlo.com/ishe.json';
+var human = require('human-time');
 
 // Mount our app.
 ReactDOM.render(
@@ -31,7 +32,7 @@ ReactDOM.render(
 
 
 
-
+// readTheFile :: this is the actual entrypoint
 function readTheFile() {
     return fetch(fileToFetch)
 
@@ -43,8 +44,15 @@ function readTheFile() {
         ReactDOM.render(json.ishe,
             document.querySelector('#isHeThere')
         );
+        var nowUTC=new Date(); // now UTC maybe?
+        var whenUTC=new Date(json.when); // last seen UTC
+        var sinceWhen = (human((nowUTC-whenUTC)/1000)); // diff in UTC (convert to seconds)
+        ReactDOM.render(sinceWhen,
+            document.querySelector('#AndrewsMessage')
+        );
 
-        isHeThere(json) ;
+
+        // isHeThere(json) ;
 
         }).catch(function(ex) {
             console.log('parsing failed', ex)
@@ -52,6 +60,7 @@ function readTheFile() {
     })
 }
 
+// this function is redundant for the moment, but i'll use it if there are more live things to update 
 function isHeThere(yesornoJson) {
     var yesorno = "I don't actually know"
     console.log("json=",yesornoJson);
@@ -69,7 +78,7 @@ function isHeThere(yesornoJson) {
         yesorno = yesornoJson.ishe 
     }
 //    ReactDOM.render(<Timer />, yesorno);  // "Target container is not a DOM element."
-    ReactDOM.render(yesorno,document.querySelector('#AndrewsMessage'));
+//    ReactDOM.render("Since "+yesornoJson.when,document.querySelector('#AndrewsMessage'));
 }
  
 class Timer extends React.Component {
@@ -104,11 +113,13 @@ class Timer extends React.Component {
     }
 
     render() {
-//        console.log("read the file", readTheFile()); // readTheFile returns a promise
         // readTheFile passes the result to isHeThere.  that's back to front, but i don't understand promises
+//        console.log("read the file", readTheFile()); // readTheFile returns a promise
+//        Seconds: {this.state.seconds}
+        // 
         return (
         <div >
-        Seconds: {this.state.seconds}
+        {this.state.seconds} 
         </div>
         );
     }
