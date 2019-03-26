@@ -87,12 +87,13 @@ Resources:
           def telltheworld(event, context):
               path = 'ishe.json'
               when = datetime.datetime.now().isoformat()
-              whatDoesHeSay = event['whatDoesHeSay']
-              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + '"}'
+              querystring = event['queryStringParameters']
+              whatDoesHeSay = querystring['whatDoesHeSay']
+              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
               putitinthebucket(jsondata,path)
           #{
           #"ishe":"no",
-          #"when":"2019-01-08Z23:00:00"
+          #"when":"2019-01-08Z23:00:00Z"
           #}
 
           def putitinthebucket(jsondata,path):
