@@ -19,7 +19,7 @@ Resources:
       CorsConfiguration:
         CorsRules:
         - AllowedMethods: [GET]
-        AllowedOrigins: "*"
+          AllowedOrigins: ["*"]
   isandrewatthebowloBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
