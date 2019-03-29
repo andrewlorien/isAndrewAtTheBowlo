@@ -65,23 +65,9 @@ Resources:
           import json
           import datetime
 
-
           AWS_BUCKET_NAME = 'isandrewatthebowlo.com'
           s3 = boto3.resource('s3')
           bucket = s3.Bucket(AWS_BUCKET_NAME)
-          
-          def test():
-              when = datetime.datetime.now().isoformat()
-              whatDoesHeSay = "soon"
-              jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
-              return jsondata
-
-              
-          def debuggit(event, context):
-              path = 'debuggit.json'
-              when = datetime.datetime.now().isoformat()
-              jsondata = str(event)      
-              putitinthebucket(jsondata,path)
               
           # call this function with a PUT request containing a json object like {"whatDoesHeSay": "no"}
           def telltheworld(event, context):
@@ -91,6 +77,7 @@ Resources:
               whatDoesHeSay = querystring['whatDoesHeSay']
               jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
               body = putitinthebucket(jsondata,path)
+              tellDylan()
             
               print (body) 
               return {
@@ -99,10 +86,6 @@ Resources:
                 "statusCode": 200,
                 "body": json.dumps(body)
               }
-          #{
-          #"ishe":"no",
-          #"when":"2019-01-08Z23:00:00Z"
-          #}
 
           def putitinthebucket(jsondata,path):
               bucket.put_object(
@@ -118,9 +101,30 @@ Resources:
                   "path": path,
               }
               return body
+          
+          def tellDylan():
+            response = sns.publish(
+                TopicArn=os.environ['NotificationTopicARN'],    
+                Message='Andrew is at the bowlo.  Brought to you by http://IsAndrewAtTheBowlo.com'
+            )    
+            
+          #{
+          #"ishe":"no",
+          #"when":"2019-01-08Z23:00:00Z"
+          #}
+              
+          def debuggit(event, context):
+              path = 'debuggit.json'
+              when = datetime.datetime.now().isoformat()
+              jsondata = str(event)      
+              putitinthebucket(jsondata,path)
+              
       Description: Recieve an http request through the API gateway; write a file to S3
       FunctionName: !Ref lambdaFunctionName
       Handler: !Sub 'index.${lambdaFunctionName}'
+      Environment:
+        Variables:
+          NotificationTopicARN: !ref IsAndrewAtTheBowloNotification
       # min allowed MemorySize is 64MB.  My test run hit 73MB
       MemorySize: 128
       ReservedConcurrentExecutions : 1
@@ -269,6 +273,12 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b17d8d5a-ba74-4415-9f39-bae5a578043b
+  IsAndrewAtTheBowloNotification:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: IsAndrewAtTheBowloNotification
+      TopicName: IsAndrewAtTheBowloNotification    
+    
 Outputs:
   apiGatewayInvokeURL:
     Value: !Sub >-

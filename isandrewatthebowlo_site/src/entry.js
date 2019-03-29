@@ -1,8 +1,3 @@
-// You may or may not need this depending on
-// what JavaScript features you're using - e.x. async / await.
-// Feel free to remove it and see what happens!
-//import '@babel/polyfill'
-
 // Import our top-level sass file.
 import './styles/styles.scss'
 
