@@ -124,7 +124,7 @@ Resources:
       Handler: !Sub 'index.${lambdaFunctionName}'
       Environment:
         Variables:
-          NotificationTopicARN: !ref IsAndrewAtTheBowloNotification
+          NotificationTopicARN: !Ref IsAndrewAtTheBowloNotification
       # min allowed MemorySize is 64MB.  My test run hit 73MB
       MemorySize: 128
       ReservedConcurrentExecutions : 1
