@@ -1,6 +1,7 @@
 import boto3
 import json
 import datetime
+import os
 
 
 AWS_BUCKET_NAME = 'isandrewatthebowlo.com'

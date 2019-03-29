@@ -64,8 +64,10 @@ Resources:
           import boto3
           import json
           import datetime
+          import os
 
           AWS_BUCKET_NAME = 'isandrewatthebowlo.com'
+          sns = boto3.client('sns')
           s3 = boto3.resource('s3')
           bucket = s3.Bucket(AWS_BUCKET_NAME)
               
@@ -210,6 +212,15 @@ Resources:
                       - !Ref DomainName
                       - '/debuggit.json'
           PolicyName: lambdaS3
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'SNS:Publish'
+                Effect: Allow
+                Resource:
+                  - !Ref IsAndrewAtTheBowloNotification
+          PolicyName: lambdaSNS
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b49b8949-952c-4d28-ae92-26116cd023c2

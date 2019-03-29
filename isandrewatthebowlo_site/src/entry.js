@@ -19,11 +19,6 @@ document.body.className = 'bg-black-80 fw4 white-80'
 var fileToFetch = 'http://isandrewatthebowlo.com/ishe.json';
 var human = require('human-time');
 
-// Mount our app.
-ReactDOM.render(
-  <App />,
-  document.querySelector('#app')
-)
 
 
 
@@ -43,7 +38,7 @@ function readTheFile() {
         var whenUTC=new Date(json.when); // last seen UTC
         var sinceWhen = (human((nowUTC-whenUTC)/1000)); // diff in UTC (convert to seconds)
         ReactDOM.render(sinceWhen,
-            document.querySelector('#AndrewsMessage')
+            document.querySelector('#sinceWhen')
         );
 
 
@@ -123,5 +118,10 @@ class Timer extends React.Component {
 
 readTheFile();
 
-ReactDOM.render(<Timer />, sinceWhen);
+// Mount our app.
+ReactDOM.render(
+  <App />,
+  document.querySelector('#app')
+)
+ReactDOM.render(<Timer />, aTimer);
 // ReactDOM.render(yesorno, isHeThere);
