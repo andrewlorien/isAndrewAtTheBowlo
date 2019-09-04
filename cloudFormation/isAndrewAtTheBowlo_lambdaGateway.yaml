@@ -79,7 +79,8 @@ Resources:
               whatDoesHeSay = querystring['whatDoesHeSay']
               jsondata = '{"ishe":"' + whatDoesHeSay + '","when":"' + when + 'Z"}'
               body = putitinthebucket(jsondata,path)
-              tellDylan()
+              if whatDoesHeSay == "yes":
+                  tellDylan()
             
               print (body) 
               return {
@@ -221,6 +222,30 @@ Resources:
                 Resource:
                   - !Ref IsAndrewAtTheBowloNotification
           PolicyName: lambdaSNS
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:PutMetricFilter'
+                  - 'logs:PutRetentionPolicy'
+                Effect: Allow
+                Resource: '*'
+          PolicyName: SNSFailureFeedback 
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:PutMetricFilter'
+                  - 'logs:PutRetentionPolicy'
+                Effect: Allow
+                Resource: '*'
+          PolicyName: SNSSuccessFeedback           
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b49b8949-952c-4d28-ae92-26116cd023c2
@@ -245,8 +270,10 @@ Resources:
               - ''
               - - 'arn:aws:s3:::'
                 - !Ref DomainName
-                - '/*'            
-            Principal: "*"
+                - '/*'               
+            Principal:
+              AWS:
+                - !GetAtt lambdaIAMRole.Arn
           - Sid: S3PublicWebsite
             Action:
               - 's3:GetObject'
@@ -289,6 +316,7 @@ Resources:
     Properties:
       DisplayName: IsAndrewAtTheBowloNotification
       TopicName: IsAndrewAtTheBowloNotification    
+      # the Service Role has to be set in the SNS|SMS|Delivery Status Loggin preferences :https://ap-southeast-2.console.aws.amazon.com/sns/v3/home?region=ap-southeast-2#/mobile/text-messaging/edit-preferences
     
 Outputs:
   apiGatewayInvokeURL:
