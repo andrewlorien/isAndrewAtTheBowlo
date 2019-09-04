@@ -1,4 +1,4 @@
-# Is Andrew at the Bowlo : The Website?
+# Is Andrew at the Bowlo : The Website
 A static node/js wesite, using React and build with Webpack, deployed to S3
 
 ## Design
