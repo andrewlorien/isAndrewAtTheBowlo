@@ -35,7 +35,7 @@
     "glob-all": "^3.1.0",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.5.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^7.0.17",
     "postcss-colormin": "^4.0.3",
