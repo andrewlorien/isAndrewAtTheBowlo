@@ -301,14 +301,7 @@ module.exports = (env, argv) => ({
     minimizer: [
       // https://goo.gl/yWD5vm - List of reasons we're using Terser instead (Webpack is too!).
       new TerserPlugin({ // https://goo.gl/YgdtKb
-        cache: true, // https://goo.gl/QVWRtq
-        parallel: true, //https://goo.gl/hUkvnK
-        terserOptions: { // https://goo.gl/y3psR1
-          ecma: 5,
-          output: {
-            comments: false
-          }
-        }
+        parallel: true //https://goo.gl/hUkvnK
       })
     ]
   },
@@ -425,10 +418,25 @@ module.exports = (env, argv) => ({
 //    port: 8765,
 
     /*
+     * old version 3 webpack way:
       https://goo.gl/mrysGp, https://goo.gl/srfqLB
       Nobody wants to see 0.0.0.0 in the browser. This get's rid of that.
+//    public: `http://localhost:${DEV_SERVER_PORT}`,
     */
-    public: `http://localhost:${DEV_SERVER_PORT}`,
+
+    client: {
+      // Can be `string`:
+      //
+      // To get protocol/hostname/port from browser
+      // webSocketURL: 'auto://0.0.0.0:0/ws'
+      webSocketURL: {
+//        hostname: "0.0.0.0",
+        hostname: "localhost",
+        pathname: "/",
+        port: 8080,
+
+      },
+    },
 
     /*
       https://goo.gl/a6WW1p
@@ -463,7 +471,7 @@ module.exports = (env, argv) => ({
     Seems to be the fastest one with accurate line numbers
     matching what you'd see in your editor.
   */
-  devtool: !env.prod && 'cheap-module-eval-source-map',
+  devtool: !env.prod && 'eval-source-map',
 
   /*
     https://goo.gl/ZisDCb
