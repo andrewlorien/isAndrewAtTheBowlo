@@ -244,6 +244,11 @@ module.exports = (env, argv) => ({
       {
         test: /\.(png|svg|jpg|gif)$/,
         type: 'asset/resource'
+
+//        loader: 'file-loader',
+//        options: {
+//          name: '[path][name].[ext],
+//      }        
       }
     ]
   },
