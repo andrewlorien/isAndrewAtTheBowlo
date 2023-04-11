@@ -29,7 +29,6 @@
 */
 @import '~sassyons/scss/sassyons';
 
-
 /*
   Application Styles
   ------------------
@@ -38,4 +37,23 @@
   @import each of them in reverse-priority order (bottom = highest priority).
 */
 @import 'global';
-a {color: #79a9de}
+@font-face {
+  font-family: 'C059-Roman';
+  src: url('./C059-Roman.otf') format('otf');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'StyleScript';
+  src: url('./StyleScript-Regular.ttf') format('ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+a {
+  color: #79a9de;
+  font-family: 'C059-Roman';
+}
+h2 {
+  color: #ffd700;
+  font-family: 'StyleScript';
+}

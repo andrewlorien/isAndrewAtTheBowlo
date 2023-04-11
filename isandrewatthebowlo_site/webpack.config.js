@@ -164,7 +164,8 @@ module.exports = (env, argv) => ({
                   '@babel/preset-env', // https://goo.gl/aAxYAq
                   {
                     modules: false, // Needed for tree shaking to work (see above).
-                    useBuiltIns: 'entry' // https://goo.gl/x16mAq
+                    useBuiltIns: 'entry', // https://goo.gl/x16mAq  // some sort of corejs warning when i include this
+                    "corejs": 3
                   }
                 ],
                 '@babel/preset-react' // https://goo.gl/4aEFV3
@@ -242,36 +243,20 @@ module.exports = (env, argv) => ({
         * Keeps the original file name
       */
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        include: path.resolve(__dirname, 'src'),
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]'
-            }
-          }
-        ]
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource'
       },
 
 
       /*
         IMAGES
         ------
-        * Copies fonts found within the `src` tree to the `dist` folder
+        * Copies images found within the `src` tree to the `dist` folder
         * Keeps the original file name
       */
       {
         test: /\.(png|svg|jpg|gif)$/,
-        include: path.resolve(__dirname, 'src/assets'),
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]'
-            }
-          }
-        ]
+        type: 'asset/resource'
       }
     ]
   },
