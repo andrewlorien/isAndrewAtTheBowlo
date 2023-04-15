@@ -70,7 +70,8 @@ h2 {
 // if    yesornoJson.ishe   contains   tolower("yes" or "yep")   then  use a random image from "yes" folder
 // else use a random image from "no" folder
 #app {
-  background-image: url('../assets/images/yes/IMG_20170321_192410.jpg');
+// set the background image when "isHe" changes
+//  background-image: url('../assets/images/yes/IMG_20170321_192410.jpg');
   background-position: center;
   background-size: contain; // or 'cover'
   background-repeat: no-repeat;
