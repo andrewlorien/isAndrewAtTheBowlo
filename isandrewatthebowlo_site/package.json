@@ -7,25 +7,23 @@
   "email": "",
   "license": "Apache-2.0",
   "browserslist": [
-    ">0.25%",
+    ">1%",
     "not ie 11",
-    "not op_mini all"
+    "not op_mini all",
+    "not dead"
   ],
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.0.0",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "@webpack-cli/serve": "^2.0.1",
     "autoprefixer": "^9.6.0",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^8.3.0",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^11.0.0",
-    "cross-env": "^5.2.0",
+    "core-js": "^3.1.4",
+    "cross-env": "^5.2.1",
     "css-declaration-sorter": "^4.0.1",
     "css-loader": "^6.7.3",
     "css-mqpacker": "^7.0.0",
@@ -37,18 +35,17 @@
     "glob-all": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.5",
-    "node-sass": "^8.0.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.2.15",
+    "postcss": "^8.4.21",
     "postcss-colormin": "^4.0.3",
-    "postcss-combine-duplicated-selectors": "^6.1.0",
-    "postcss-discard-comments": "^4.0.2",
-    "postcss-loader": "^3.0.0",
+    "postcss-combine-duplicated-selectors": "^10.0.3",
+    "postcss-discard-comments": "^6.0.0",
+    "postcss-loader": "^7.2.4",
     "purgecss-whitelister": "^2.4.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "sass-loader": "^13.2.2",
-    "sassyons": "^2.2.1",
+    "sassyons": "^4.2.1",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^5.3.7",
     "webpack": "^5.78.0",
@@ -56,12 +53,14 @@
     "webpack-dev-server": "^4.13.2"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --mode production --env.prod",
+    "build": "cross-env NODE_ENV=production webpack --mode production",
     "start": "cross-env NODE_ENV=development webpack-dev-server --mode development  --progress   --port 8765",
     "deploy": "npm run build && aws s3 cp --recursive dist s3://isandrewatthebowlo.com --profile radagast"
   },
   "dependencies": {
+    "core-js": "^3.30.0",
     "human-time": "0.0.2",
-    "whatwg-fetch": "^3.0.0"
+    "sass": "^1.61.0",
+    "whatwg-fetch": "^3.6.2"
   }
 }
