@@ -42,7 +42,7 @@ function readTheFile() {
         );
 
 
-        // isHeThere(json) ;
+        isHeThere(json) ;
 
         }).catch(function(ex) {
             console.log('parsing failed', ex)
@@ -55,20 +55,21 @@ function isHeThere(yesornoJson) {
     var yesorno = "I don't actually know"
     console.log("json=",yesornoJson);
         console.log("ishe ?=",yesornoJson.ishe);
-    if (yesornoJson.ishe == "yes") {
+    if (yesornoJson.ishe == "yes") {  // TODO : if ishe CONTAINS "yes"
         console.log("ishe yes?=",yesornoJson.ishe);
         // check time for "he just arrived" or "he's been there a while"
         yesorno = "yes"
-    } else if (yesornoJson.ishe == "no") {
+    } else if (yesornoJson.ishe == "no") {  // TODO : if ishe CONTAINS "no"
         console.log("ishe no?=",yesornoJson.ishe);
-        // if it was recently yes, then return "he just left"
+        // if it was recently yes, then return "he just left" (currently doing this with two separate macrodroid triggers)
         yesorno = "no"
     } else  {
         console.log("ishe nearly?=",yesornoJson.ishe);
         yesorno = yesornoJson.ishe 
     }
-//    ReactDOM.render(<Timer />, yesorno);  // "Target container is not a DOM element."
-//    ReactDOM.render("Since "+yesornoJson.when,document.querySelector('#AndrewsMessage'));
+//    ReactDOM.render(<Timer />, yesorno,document.querySelector('#AndrewsMessage'));  // "Target container is not a DOM element."
+//    ReactDOM.render("Since "+yesornoJson.when,document.querySelector('#AndrewsMessage'));  // this works
+// set css.backgroundImage to a random image from the $(yesorno) folder
 }
  
 class Timer extends React.Component {

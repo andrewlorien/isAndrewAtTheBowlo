@@ -275,10 +275,22 @@ module.exports = (env, argv) => ({
 
   // https://goo.gl/bxPV7L
   optimization: {
+    'minimize': true,
     minimizer: [
       // https://goo.gl/yWD5vm - List of reasons we're using Terser instead (Webpack is too!).
       new TerserPlugin({ // https://goo.gl/YgdtKb
-        parallel: true //https://goo.gl/hUkvnK
+        parallel: true, //https://goo.gl/hUkvnK
+        terserOptions: {
+          compress: {
+            // remove these from production build (leave console.error)
+            pure_funcs: [
+                'console.log', 
+                'console.info', 
+                'console.debug', 
+                'console.warn'
+            ] 
+          },
+        },
       })
     ]
   },
@@ -462,5 +474,10 @@ module.exports = (env, argv) => ({
     `web` is default, but if you're making a 3rd party library
     consumed in Node, change this to `node`. There are others as well.
   */
-  target: 'web'
+  target: 'web',
+  // stop the size limit warning https://github.com/webpack/webpack/issues/3486
+  performance: {
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  }
 })
