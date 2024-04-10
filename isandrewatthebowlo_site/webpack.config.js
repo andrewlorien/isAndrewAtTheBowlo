@@ -139,14 +139,7 @@ module.exports = (env, argv) => ({
           {
             /*
               https://goo.gl/N6uJv3 - Babel loader.
-                - babel-loader
-                - @babel/core
-                - @babel/polyfill (used in the entry.js file)
-                - @babel/preset-env
-                - @babel/preset-react
-                - @babel/plugin-proposal-object-rest-spread
-                - @babel/plugin-proposal-class-properties
-                - @babel/plugin-syntax-dynamic-import
+                you can put all this in babel.config.json but i'm putting it here
             */
             loader: 'babel-loader',
             options: {
@@ -164,19 +157,13 @@ module.exports = (env, argv) => ({
                   '@babel/preset-env', // https://goo.gl/aAxYAq
                   {
                     modules: false, // Needed for tree shaking to work (see above).
-                    useBuiltIns: 'entry', // https://goo.gl/x16mAq  // some sort of corejs warning when i include this
+                    useBuiltIns: 'entry', // https://goo.gl/x16mAq  
                     "corejs": 3
                   }
                 ],
                 '@babel/preset-react' // https://goo.gl/4aEFV3
               ],
 
-              // https://goo.gl/N9gaqc - List of Babel plugins.
-              plugins: [
-                '@babel/plugin-proposal-object-rest-spread', // https://goo.gl/LCHWnP
-                '@babel/plugin-proposal-class-properties', // https://goo.gl/TE6TyG
-                '@babel/plugin-syntax-dynamic-import' // https://goo.gl/ho4CDh
-              ]
             }
           }
         ]
@@ -244,7 +231,7 @@ module.exports = (env, argv) => ({
       */
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource'
+        type: 'asset/resource',
       },
 
 
@@ -257,6 +244,11 @@ module.exports = (env, argv) => ({
       {
         test: /\.(png|svg|jpg|gif)$/,
         type: 'asset/resource'
+
+//        loader: 'file-loader',
+//        options: {
+//          name: '[path][name].[ext],
+//      }        
       }
     ]
   },
@@ -283,10 +275,22 @@ module.exports = (env, argv) => ({
 
   // https://goo.gl/bxPV7L
   optimization: {
+    'minimize': true,
     minimizer: [
       // https://goo.gl/yWD5vm - List of reasons we're using Terser instead (Webpack is too!).
       new TerserPlugin({ // https://goo.gl/YgdtKb
-        parallel: true //https://goo.gl/hUkvnK
+        parallel: true, //https://goo.gl/hUkvnK
+        terserOptions: {
+          compress: {
+            // remove these from production build (leave console.error)
+            pure_funcs: [
+                'console.log', 
+                'console.info', 
+                'console.debug', 
+                'console.warn'
+            ] 
+          },
+        },
       })
     ]
   },
@@ -303,14 +307,6 @@ module.exports = (env, argv) => ({
       __DEV__: !env.prod,
       __PROD__: env.prod,
 
-      /*
-        https://goo.gl/sB6d6b
-        Needed in order to use the production-ready minified version of React.
-        Avoids warnings in the console.
-      */
-      'process.env': {
-        NODE_ENV: JSON.stringify(env.prod ? 'production' : 'development')
-      }
     }),
 
     // This must be used in conjunction with the associated scss module rule.
@@ -343,8 +339,9 @@ module.exports = (env, argv) => ({
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.ejs'),
       title: 'Is Andrew at the bowlo?  Check here to find out.',
+      description: 'A very complicated set of codez he made so you can find out.',
+      favicon: "./assets/favicon.ico",
       mobileThemeColor: '#000000',
-      description: 'Awesome JavaScript project created with Create New App!',
       polyfill: !!env.prod,
       minify: {
         collapseWhitespace: true,
@@ -418,8 +415,7 @@ module.exports = (env, argv) => ({
 //        hostname: "0.0.0.0",
         hostname: "localhost",
         pathname: "/",
-        port: 8080,
-
+        port: 8765
       },
     },
 
@@ -478,5 +474,10 @@ module.exports = (env, argv) => ({
     `web` is default, but if you're making a 3rd party library
     consumed in Node, change this to `node`. There are others as well.
   */
-  target: 'web'
+  target: 'web',
+  // stop the size limit warning https://github.com/webpack/webpack/issues/3486
+  performance: {
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  }
 })

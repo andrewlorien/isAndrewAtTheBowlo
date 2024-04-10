@@ -37,23 +37,43 @@
   @import each of them in reverse-priority order (bottom = highest priority).
 */
 @import 'global';
+
 @font-face {
-  font-family: 'C059-Roman';
-  src: url('./C059-Roman.otf') format('otf');
-  font-weight: 600;
-  font-style: normal;
+  font-family: 'C059_Roman';
+  src: url('../assets/fonts/C059-Roman.otf') format('otf');
+//  font-weight: 600;
+//  font-style: normal;
 }
 @font-face {
   font-family: 'StyleScript';
-  src: url('./StyleScript-Regular.ttf') format('ttf');
-  font-weight: 600;
-  font-style: normal;
+  src: url('../assets/fonts/StyleScript-Regular.ttf') format('ttf');
+  font-weight: 400;
+//  font-style: normal;
 }
+
 a {
   color: #79a9de;
-  font-family: 'C059-Roman';
+  font-family: 'C059_Roman';
+}
+h1 {
+  text-shadow: -1px 1px 0 #970, -3px 1px 0 #c90,  -2px 3px 0 #774d00;
 }
 h2 {
   color: #ffd700;
-  font-family: 'StyleScript';
+  font-family: 'Style Script';
+}
+.bg-bowloboard {
+  color: #ffd700;
+  background-color: #863f04;
+}
+
+// if    yesornoJson.ishe   contains   tolower("yes" or "yep")   then  use a random image from "yes" folder
+// else use a random image from "no" folder
+#app {
+// set the background image when "isHe" changes
+//  background-image: url('../assets/images/yes/IMG_20170321_192410.jpg');
+  background-position: center;
+  background-size: contain; // or 'cover'
+  background-repeat: no-repeat;
+  
 }
